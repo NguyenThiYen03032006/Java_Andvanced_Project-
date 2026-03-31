@@ -1,4 +1,4 @@
 package ra.meetingroom.service.people;
 
-public interface UserService {
+public class UserService {
 }

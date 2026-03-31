@@ -34,10 +34,8 @@ public class BookingService {
 
         return false;
     }
-
     // 🔹 Tạo booking
     public boolean createBooking(Booking b) {
-
         if (isConflictWithApproved(
                 b.getRoomId(),
                 b.getStartTime(),
@@ -46,22 +44,16 @@ public class BookingService {
             System.out.println("Đã có phòng được sử dụng trong thời gian này!");
             return false;
         }
-
         b.setStatus("PENDING");
-
         return bookingDAO.insert(b);
     }
 
-
     public boolean approveBooking(int bookingId) {
-
         Booking booking = bookingDAO.findById(bookingId);
-
         if (booking == null) {
             System.out.println("Không tìm thấy booking!");
             return false;
         }
-
         //  check trùng với APPROVED
         if (isConflictWithApproved(
                 booking.getRoomId(),
@@ -71,45 +63,43 @@ public class BookingService {
             System.out.println("Đã có booking APPROVED trùng!");
             return false;
         }
-
         //  duyệt booking này
         bookingDAO.updateStatus(bookingId, "APPROVED");
-
         // tìm PENDING trùng → hủy
         List<Booking> conflicts = bookingDAO.findConflictBookings(
                 booking.getRoomId(),
                 booking.getStartTime(),
                 booking.getEndTime()
         );
-
         for (Booking b : conflicts) {
             if (b.getId() != bookingId) {
                 bookingDAO.updateStatus(b.getId(), "CANCELLED");
             }
         }
-
         return true;
     }
+
     public List<Booking> getPending() {
         return bookingDAO.findPending();
     }
+
     public List<Booking> getByUser(int userId) {
         return bookingDAO.findByUserId(userId);
     }
+
     public boolean updateStatus(int bookingId, String status) {
-
         Booking booking = bookingDAO.findById(bookingId);
-
         if (booking == null) {
             System.out.println("Không tìm thấy booking!");
             return false;
         }
-
         if (!"PENDING".equals(booking.getStatus())) {
             System.out.println("Chỉ được cập nhật booking PENDING!");
             return false;
         }
-
         return bookingDAO.updateStatus(bookingId, status);
+    }
+    public List<Booking> getApproved() {
+        return bookingDAO.findByStatus("APPROVED");
     }
 }

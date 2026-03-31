@@ -16,12 +16,12 @@ public class EquipmentService {
 
         // validation
         if (e.getAvailableQuantity() > e.getTotalQuantity()) {
-            System.out.println("Available không được lớn hơn total!");
+            System.out.println("Số lượng khả dụng không được lớn hơn tổng số lượng!");
             return false;
         }
 
         if (e.getTotalQuantity() <= 0) {
-            System.out.println("Total phải > 0");
+            System.out.println("Tổng số lượng phải > 0");
             return false;
         }
 
@@ -31,7 +31,7 @@ public class EquipmentService {
 
         // validation
         if (available > total) {
-            System.out.println("Available không được lớn hơn total!");
+            System.out.println("Số lượng khả dụng không được lớn hơn tổng số lượng!");
             return false;
         }
 

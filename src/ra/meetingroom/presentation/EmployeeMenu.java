@@ -18,15 +18,15 @@ public class EmployeeMenu {
     public void show(){
         while (true){
             System.out.println("""
-                EMPLOYEE MENU
-                1. Xem phòng trống
-                2. Tạo yêu cầu đặt phòng
-                3. Danh sách booking của bản thân
-                0. Thoát
-                """);
-
+========================= EMPLOYEE MENU =========================
+|   1. Xem phòng trống          |    2. Tạo yêu cầu đặt phòng   |
+-----------------------------------------------------------------
+|                3. Danh sách booking của bản thân              |
+-----------------------------------------------------------------
+|                    0. Thoát                                   |
+-----------------------------------------------------------------""");
+            System.out.print("Lựa chọn của bạn: ");
             int choice = Integer.parseInt(sc.nextLine());
-
             switch (choice) {
                 case 1:
                     roomService.showRoomsWithStatus();
@@ -36,10 +36,10 @@ public class EmployeeMenu {
                     break;
                 case 3:
                     viewMyBookings();
-
+                    break;
                 case 0:
-                    return; // chỉ thoát EmployeeMenu
-
+                    System.out.println("Bạn đã chọn thoát !!!");
+                    return;
                 default:
                     System.out.println("Lựa chọn của bạn không hợp lệ");
             }
@@ -56,7 +56,7 @@ public class EmployeeMenu {
             String status = assignmentService.getStatusByBooking(b.getId());
 
             if (status != null) {
-                System.out.println("👉 Trạng thái phòng: " + status);
+                System.out.println(" Trạng thái phòng: " + status);
             }
         }
     }

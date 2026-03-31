@@ -14,7 +14,6 @@ public class PasswordUtil {
         }
         return BCrypt.hashpw(plainPassword, BCrypt.gensalt(12));
     }
-
     // Kiểm tra mật khẩu khi login
     public static boolean checkPassword(String plainPassword, String hashedPassword) {
         if (plainPassword == null || hashedPassword == null) {
@@ -23,36 +22,6 @@ public class PasswordUtil {
         }
         return BCrypt.checkpw(plainPassword, hashedPassword);
     }
-
-    /*
-    Dang ky
-    public void register(String username, String password) {
-
-    String hashedPassword = PasswordUtil.hashPassword(password);
-
-    User user = new User();
-    user.setUsername(username);
-    user.setPassword(hashedPassword);
-
-    userDAO.insert(user);
-
-
-    dang nhap
-    public boolean login(String username, String password) {
-
-    User user = userDAO.findByUsername(username);
-
-    if(user == null) {
-        return false;
-    }
-
-    return PasswordUtil.checkPassword(password, user.getPassword());
-}
-}
-
-     */
-
-
 
     // 🔹 Hàm mã hóa SHA-256
 //    public static String hashPassword(String password) {
@@ -82,26 +51,6 @@ public class PasswordUtil {
 //        return hashedInput.equals(storedPassword);
 //    }
 }
-/*
-khi dang ky
-String rawPassword = "123456";
-String hashed = PasswordUtil.hashPassword(rawPassword);
-
-// lưu hashed vào DB
- */
-/*
-Khi dang nhap
-String inputPassword = "123456";
-String storedPassword = user.getPassword();
-
-if (PasswordUtil.checkPassword(inputPassword, storedPassword)) {
-    System.out.println("Login success");
-} else {
-    System.out.println("Sai mật khẩu");
-}
- */
-
-
 /*
 Lưu ý: logic mã hóa mật khẩu trên
 - 2 mật khẩu giống nhau sẽ đc mã hóa ra kq giống nhau

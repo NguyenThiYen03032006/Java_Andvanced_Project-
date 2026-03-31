@@ -239,4 +239,32 @@ public class BookingDAO {
 
         return list;
     }
+    public List<Booking> findByStatus(String status) {
+        List<Booking> list = new ArrayList<>();
+        String sql = "SELECT * FROM bookings WHERE status = ?";
+
+        try (Connection conn = DBConnection.openConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, status);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Booking b = new Booking();
+                b.setId(rs.getInt("id"));
+                b.setUserId(rs.getInt("user_id"));
+                b.setRoomId(rs.getInt("room_id"));
+                b.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
+                b.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
+                b.setStatus(rs.getString("status"));
+
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 }

@@ -62,18 +62,52 @@ public class AssignmentDAO {
     }
 
     // 🔹 4. Lấy trạng thái theo booking (cho Employee xem)
-    public String findByBookingId(int bookingId) {
-        String sql = "SELECT status FROM assignments WHERE booking_id = ?";
+    public Assignment findByBookingId(int bookingId) {
+        String sql = "SELECT * FROM assignments WHERE booking_id = ?";
+
         try (Connection conn = DBConnection.openConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, bookingId);
             ResultSet rs = ps.executeQuery();
+
             if (rs.next()) {
-                return rs.getString("status");
+                Assignment a = new Assignment();
+                a.setId(rs.getInt("id"));
+                a.setBookingId(rs.getInt("booking_id"));
+                a.setSupportStaffId(rs.getInt("support_id"));
+                a.setStatus(rs.getString("status"));
+                return a;
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
+    public Assignment findById(int id) {
+
+        String sql = "SELECT * FROM assignments WHERE id = ?";
+
+        try (Connection conn = DBConnection.openConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Assignment a = new Assignment();
+                a.setId(rs.getInt("id"));
+                a.setBookingId(rs.getInt("booking_id"));
+                a.setSupportStaffId(rs.getInt("support_id"));
+                a.setStatus(rs.getString("status"));
+                return a;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 }

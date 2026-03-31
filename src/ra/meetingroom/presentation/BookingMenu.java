@@ -18,18 +18,26 @@ public class BookingMenu {
 
     public void show(int userId, String role) {
         while (true) {
-            System.out.println("\n===== BOOKING MENU =====");
             if ("EMPLOYEE".equals(role)) {
-                System.out.println("1. Đặt phòng");
+                System.out.println("""
+========================= BOOKING MENU =========================
+|   1. Đặt phòng                                               |
+---------------------------------------------------------------- 
+|                    0. Thoát                                  |
+----------------------------------------------------------------""");
+                System.out.print("Lựa chọn của bạn: ");
             }
             if ("ADMIN".equals(role)) {
                 System.out.println("""
-    1. Xem booking PENDING
-    2. Duyệt booking + phân công support
-    3. Từ chối booking
-    """);
+========================= BOOKING MENU =========================
+|   1. Xem booking PENDING     |    2. Duyệt booking           |
+----------------------------------------------------------------
+|   3. Từ chối booking         |    4. Phân công support       |
+---------------------------------------------------------------- 
+|                    0. Thoát                                  |
+----------------------------------------------------------------""");
+                System.out.print("Lựa chọn của bạn: ");
             }
-            System.out.println("0. Thoát");
             int choice = Integer.parseInt(sc.nextLine());
             switch (role) {
                 case "EMPLOYEE":
@@ -39,13 +47,22 @@ public class BookingMenu {
                 case "ADMIN":
                     switch (choice) {
                         case 1:
-                            viewAllBookings();
+                            viewPendingBookings();
                             break;
                         case 2:
-                            approveAndAssign();
+                            approveBooking();
+                            break;
+                        case 3:
+                            rejectBooking();
+                            break;
+                        case 4:
+                            assignSupport();
                             break;
                         case 0:
+                            System.out.println("Bạn đã chọn thoát !!!");
                             return;
+                        default:
+                            System.out.println("Lựa chọn của bnaj không hợp lệ");
                     }
                     break;
             }
@@ -146,36 +163,80 @@ public class BookingMenu {
     }
 
     //  Admin xem
-    private void viewAllBookings() {
-        bookingService.getAll().forEach(System.out::println);
+    private void viewPendingBookings() {
+        List<Booking> list = bookingService.getPending();
+
+        if (list.isEmpty()) {
+            System.out.println("Không có booking PENDING!");
+            return;
+        }
+
+        list.forEach(System.out::println);
     }
 
-    private void approveAndAssign() {
+    private void approveBooking() {
 
         List<Booking> list = bookingService.getPending();
+
+        if (list.isEmpty()) {
+            System.out.println("Không có booking PENDING!");
+            return;
+        }
+
+        list.forEach(System.out::println);
+
+        System.out.print("Nhập ID cần duyệt: ");
+        int id = Integer.parseInt(sc.nextLine());
+
+        if (bookingService.approveBooking(id)) {
+            System.out.println("Duyệt thành công!");
+        } else {
+            System.out.println("Duyệt thất bại!");
+        }
+    }
+    private void assignSupport() {
+
+        List<Booking> list = bookingService.getApproved();
+
+        if (list.isEmpty()) {
+            System.out.println("Không có booking APPROVED!");
+            return;
+        }
 
         list.forEach(System.out::println);
 
         System.out.print("Nhập ID booking: ");
         int bookingId = Integer.parseInt(sc.nextLine());
 
-        // duyệt trước
-        boolean approved = bookingService.approveBooking(bookingId);
-
-        if (!approved) return;
-
-        // gán support
         System.out.print("Nhập ID support: ");
         int supportId = Integer.parseInt(sc.nextLine());
 
-        assignmentService.assign(bookingId, supportId);
+        boolean result = assignmentService.assign(bookingId, supportId);
 
-        System.out.println("Đã duyệt và phân công!");
+        if (result) {
+            System.out.println("Phân công thành công!");
+        } else {
+            System.out.println("Phân công thất bại!");
+        }
     }
     private void rejectBooking() {
-        System.out.print("Nhập ID: ");
+
+        List<Booking> list = bookingService.getPending();
+
+        if (list.isEmpty()) {
+            System.out.println("Không có booking PENDING!");
+            return;
+        }
+
+        list.forEach(System.out::println);
+
+        System.out.print("Nhập ID cần từ chối: ");
         int id = Integer.parseInt(sc.nextLine());
 
-        bookingService.updateStatus(id, "REJECTED");
+        if (bookingService.updateStatus(id, "REJECTED")) {
+            System.out.println("Đã từ chối!");
+        } else {
+            System.out.println("Thất bại!");
+        }
     }
 }

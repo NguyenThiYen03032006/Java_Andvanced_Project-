@@ -11,26 +11,34 @@ public class SupportMenu {
     public void show(User currentUser) {
         while (true) {
             System.out.println("""
-        SUPPORT MENU
-        1. Xem công việc
-        2. Cập nhật trạng thái
-        0. Thoát
-        """);
+========================= SUPPORT MENU =========================
+|   1. Xem công việc           |    2. Cập nhật trạng thái     |
+----------------------------------------------------------------
+|                           0. Thoát                           |
+----------------------------------------------------------------""");
+            System.out.print("Lựa chọn của bạn: ");
             int choice = Integer.parseInt(sc.nextLine());
             switch (choice) {
                 case 1:
+                    System.out.println("====================== LIST ASSIGNMENT ======================");
+                    System.out.println("|  ID  |BOOKING ID| STAFT ID |    STATUS    |  ASSIGNED AT  |");
+                    System.out.println("-------------------------------------------------------------");
                     assignmentService.getBySupport(currentUser.getId())
                             .forEach(System.out::println);
+                    System.out.println("\n");
                     break;
                 case 2:
-                    updateStatus();
+                    updateStatus(currentUser);
                     break;
                 case 0:
+                    System.out.println("Bạn đã chọn thoát !!!");
                     return;
+                default:
+                    System.out.println("Lựa chọn của bạn không hợp lệ");
             }
         }
     }
-    private void updateStatus() {
+    private void updateStatus(User currentUser) {
 
         System.out.print("Assignment ID: ");
         int id = Integer.parseInt(sc.nextLine());
@@ -49,6 +57,12 @@ public class SupportMenu {
             default -> "MISSING";
         };
 
-        assignmentService.updateStatus(id, status);
+        boolean result = assignmentService.updateStatus(id, currentUser.getId(), status);
+
+        if (result) {
+            System.out.println("Cập nhật thành công!");
+        } else {
+            System.out.println("Cập nhật thất bại!");
+        }
     }
 }

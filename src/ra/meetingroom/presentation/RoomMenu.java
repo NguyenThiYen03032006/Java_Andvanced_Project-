@@ -13,15 +13,14 @@ public class RoomMenu {
     public void show() {
         while (true) {
             System.out.println("""
-                    ===== QUẢN LÝ PHÒNG =====
-                    1. Xem danh sách
-                    2. Thêm phòng
-                    3. Sửa phòng
-                    4. Xóa phòng
-                    0. Quay lại
-                    """);
-
-            System.out.print("Chọn: ");
+======================== ROOM MANAGEMENT ========================
+|   1. Xem danh sách          |    2. Thêm phòng                |
+-----------------------------------------------------------------
+|   3. Sửa phòng              |    4. Xóa phòng                 |
+-----------------------------------------------------------------
+|                     0. Thoát                                  |
+-----------------------------------------------------------------""");
+            System.out.print("Lựa chọn của bạn: ");
             int choice = Integer.parseInt(sc.nextLine());
 
             switch (choice) {
@@ -38,7 +37,10 @@ public class RoomMenu {
                     delete();
                     break;
                 case 0:
+                    System.out.println("Bạn đã chọn thoát !!!");
                     return;
+                default:
+                    System.out.println("Lựa chọn của bạn không hợp lệ");
             }
         }
     }

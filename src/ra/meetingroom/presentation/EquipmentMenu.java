@@ -14,21 +14,26 @@ public class EquipmentMenu {
 
     public void show() {
         while (true) {
-            System.out.println("\n===== QUẢN LÝ THIẾT BỊ =====");
-            System.out.println("1. Xem danh sách");
-            System.out.println("2. Thêm thiết bị");   // thêm
-            System.out.println("3. Sửa số lượng");
-            System.out.println("4. Xóa thiết bị");
-            System.out.println("0. Thoát");
-
+            System.out.println("""
+========================= EQUIPMENT MENU =========================
+|   1. Xem danh sách            |    2. Thêm thiết bị            |
+------------------------------------------------------------------
+|   3. Sửa số lượng             |    4. Xóa thiết bị             |
+------------------------------------------------------------------
+|                        0. Thoát                                |
+------------------------------------------------------------------""");
+            System.out.print("Lựa chọn của bạn: ");
             int choice = Integer.parseInt(sc.nextLine());
-
             switch (choice) {
                 case 1: showList(); break;
                 case 2: add(); break;        // thêm
                 case 3: update(); break;
                 case 4: delete(); break;
-                case 0: return;
+                case 0:
+                    System.out.println("Bạn đã chọn thoát !!!");
+                    return;
+                default:
+                    System.out.println("Lựa chọn của bạn không hợp lệ");
             }
         }
     }

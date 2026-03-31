@@ -55,13 +55,14 @@ public class Assignment {
 
     @Override
     public String toString() {
-        return "Assignment{" +
-                "id=" + id +
-                ", bookingId=" + bookingId +
-                ", supportStaffId=" + supportStaffId +
-                ", status='" + status + '\'' +
-                ", assignedAt=" + assignedAt +
-                '}';
+      // 61  ====================== LIST ASSIGNMENT ======================
+        return String.format("| %-4d | %-8d | %-8d | %-12s | %-13s |\n|-----------------------------------------------------------|",
+                id,
+                bookingId,
+                supportStaffId,
+                status,
+                assignedAt
+        );//16
     }
 
     public int getSupportStaffId() {

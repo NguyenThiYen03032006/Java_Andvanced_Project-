@@ -18,6 +18,7 @@ public class AuthMenu {
             ============ DANG KY || DANG NHAP ============
             |  1. DANG KY  |  2. DANG NHAP  |  0. THOAT  |
             ==============================================        """);
+            System.out.print("Lựa chọn của bạn: ");
             int choice=Integer.parseInt(sc.nextLine());
             switch (choice){
                 case 1:
@@ -30,10 +31,10 @@ public class AuthMenu {
                     }
                     break;
                 case 3:
-                    System.out.println("Ban da chon thoat");
+                    System.out.println("Bạn đã chọn thoát !!!");
                     break;
                 default:
-                    System.out.println("Lua chon cua ban khong hop le");
+                    System.out.println("Lựa chọn của bạn không hợp lệ");
             }
         }
     }

@@ -20,12 +20,15 @@ public class AdminMenu {
 
     public void show() {
         while (true) {
-            System.out.println("\n===== ADMIN MENU =====");
-            System.out.println("1. Quản lý phòng");
-            System.out.println("2. Cập nhật thiết bị");
-            System.out.println("3. Tạo tài khoản Support");
-            System.out.println("4. Quản lý booking");
-            System.out.println("0. Thoát");
+            System.out.println("""
+========================= ADMIN MENU =========================
+|   1. Quản lý phòng          |    2. Cập nhật thiết bị      |
+--------------------------------------------------------------
+|   3. Tạo tài khoản Support  |    4. Quản lý booking        |
+--------------------------------------------------------------
+|                    0. Thoát                                |
+--------------------------------------------------------------""");
+            System.out.print("Lựa chọn của bạn: ");
             int choice = Integer.parseInt(sc.nextLine());
             switch (choice) {
                 case 1: new RoomMenu().show(); break;
@@ -34,7 +37,11 @@ public class AdminMenu {
                 case 4:
                     new BookingMenu().show(currentUser.getId(), "ADMIN");
                     break;
-                case 0: return;
+                case 0:
+                    System.out.println("Bạn đã chọn thoát !!!");
+                    return;
+                default:
+                    System.out.println("Lựa chọn của bạn không hợp kê");
             }
         }
     }
