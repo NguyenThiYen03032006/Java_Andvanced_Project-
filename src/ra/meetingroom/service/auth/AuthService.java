@@ -13,12 +13,8 @@ import ra.meetingroom.util.Validator;
 public class AuthService {
     private static UserDAO userDAO=new UserDAO();
     // dang ky
-    public boolean register(String username,String pass,String fullName,String role,String email){
-        // trung username
-        if(userDAO.findByUsername(username)!=null){
-            System.out.println("Da ton tai username");
-            return false;
-        }
+    public boolean register(String username,String pass,String fullName,String role,String email,String phone){
+
         // hash pass
         String hash= PasswordUtil.hashPassword(pass);
         // tao user
@@ -29,6 +25,7 @@ public class AuthService {
         user.setEmail(email);
         user.setPassword(hash);
         user.setRole(role);
+        user.setPhone(phone);
 
         return userDAO.insert(user);
     }

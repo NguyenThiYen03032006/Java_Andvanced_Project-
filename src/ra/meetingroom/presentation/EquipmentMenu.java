@@ -42,11 +42,16 @@ public class EquipmentMenu {
     private void showList() {
         List<Equipment> list = service.getAll();
 
+        System.out.println("----------------------------------------------------------------------------");
+        System.out.println("|  ID  |   Tên thiết bị   | Tổng số lượng | Số lượng khả dụng | Trạng thái |");
         for (Equipment e : list) {
-            System.out.println(e.getId() + " | " + e.getName()
-                    + " | Tổng số lượng: " + e.getTotalQuantity()
-                    + " | Số lượng khả dụng: " + e.getAvailableQuantity()
-                    + " | " + e.getStatus());
+            System.out.printf("| %4d | %-16s | %13d | %17d | %-10s |%n",
+                    e.getId(),
+                    e.getName(),
+                    e.getTotalQuantity(),
+                    e.getAvailableQuantity(),
+                    e.getStatus());
+            System.out.println("----------------------------------------------------------------------------");
         }
     }
     private void add() {

@@ -62,6 +62,22 @@ public class BookingDAO {
         return list;
     }
 
+    public boolean existsByRoomId(int roomId) {
+        String sql = "SELECT 1 FROM bookings WHERE room_id = ? LIMIT 1";
+
+        try (Connection conn = DBConnection.openConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, roomId);
+            ResultSet rs = ps.executeQuery();
+
+            return rs.next();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     // 🔹 Insert booking
     public boolean insert(Booking b) {
         String sql = "INSERT INTO bookings(user_id, room_id, start_time, end_time, status) VALUES (?, ?, ?, ?, ?)";

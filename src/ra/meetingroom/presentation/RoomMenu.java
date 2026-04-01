@@ -1,13 +1,18 @@
 package ra.meetingroom.presentation;
 
+import ra.meetingroom.model.booking.Booking;
 import ra.meetingroom.model.room.Room;
+import ra.meetingroom.service.booking.BookingService;
 import ra.meetingroom.service.room.RoomService;
+import ra.meetingroom.util.Validator;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class RoomMenu {
 
     private RoomService roomService = new RoomService();
+    private BookingService bookingService=new BookingService();
     private Scanner sc = new Scanner(System.in);
 
     public void show() {
@@ -18,7 +23,7 @@ public class RoomMenu {
 -----------------------------------------------------------------
 |   3. Sửa phòng              |    4. Xóa phòng                 |
 -----------------------------------------------------------------
-|                     0. Thoát                                  |
+|   5. Tìm kiếm phòng         |    0. Thoát                     |
 -----------------------------------------------------------------""");
             System.out.print("Lựa chọn của bạn: ");
             int choice = Integer.parseInt(sc.nextLine());
@@ -34,7 +39,22 @@ public class RoomMenu {
                     update();
                     break;
                 case 4:
-                    delete();
+                    deleteRoom();
+                    break;
+                case 5:
+                    System.out.print("Nhập tên phòng cần tìm: ");
+                    String keyword = sc.nextLine();
+
+                    List<Room> list = roomService.searchRoom(keyword);
+
+                    if (list.isEmpty()) {
+                        System.out.println("Không tìm thấy phòng!");
+                    } else {
+                        System.out.println("-------------------------------------------------------------");
+                        System.out.println("| ID |  Name  | Capacity | Location |       Description     | ");
+                        System.out.println("-------------------------------------------------------------");
+                        list.forEach(System.out::println);
+                    }
                     break;
                 case 0:
                     System.out.println("Bạn đã chọn thoát !!!");
@@ -47,6 +67,9 @@ public class RoomMenu {
 
     // 🔹 Xem
     private void showList() {
+        System.out.println("-------------------------------------------------------------");
+        System.out.println("| ID |  Name  | Capacity | Location |       Description     | ");
+        System.out.println("-------------------------------------------------------------");
         roomService.getAllRooms().forEach(System.out::println);
     }
 
@@ -54,8 +77,22 @@ public class RoomMenu {
     private void add() {
         Room r = new Room();
 
-        System.out.print("Tên phòng: ");
-        r.setName(sc.nextLine());
+        String name;
+        do {
+            System.out.print("Nhập tên phòng: ");
+            name = sc.nextLine().trim();
+
+            if (!Validator.requireNotEmpty(name, "Tên phòng")) continue;
+
+            // 🔥 check trùng NGAY TẠI ĐÂY
+            if (roomService.isNameExists(name)) {
+                System.out.println("Tên phòng đã tồn tại!");
+                name = null; // ép nhập lại
+            }
+
+        } while (name == null);
+
+        r.setName(name); // 🔥 nhớ set
 
         System.out.print("Sức chứa: ");
         r.setCapacity(Integer.parseInt(sc.nextLine()));
@@ -75,23 +112,65 @@ public class RoomMenu {
 
     // 🔹 Sửa
     private void update() {
+
+        System.out.print("Nhập ID phòng cần sửa: ");
+        int id = Integer.parseInt(sc.nextLine());
+
+        // 🔥 lấy phòng cũ
+        Room oldRoom = roomService.getById(id);
+
+        if (oldRoom == null) {
+            System.out.println("Không tìm thấy phòng!");
+            return;
+        }
+
+        // HIỂN THỊ THÔNG TIN CŨ
+        System.out.println("----------------------Thông tin hiện tại---------------------");
+        System.out.println("| ID |  Name  | Capacity | Location |       Description     | ");
+        System.out.println("-------------------------------------------------------------");
+        System.out.println(oldRoom);
         Room r = new Room();
+        r.setId(id);
 
-        System.out.print("ID: ");
-        r.setId(Integer.parseInt(sc.nextLine()));
+        // 🔹 nhập tên mới
+        String name;
+        do {
+            System.out.print("Nhập tên mới (Enter để giữ nguyên): ");
+            name = sc.nextLine().trim();
 
-        System.out.print("Tên mới: ");
-        r.setName(sc.nextLine());
+            if (name.isEmpty()) {
+                name = oldRoom.getName(); // giữ nguyên
+                break;
+            }
 
-        System.out.print("Sức chứa: ");
-        r.setCapacity(Integer.parseInt(sc.nextLine()));
+            if (roomService.isNameExistsForUpdate(name, id)) {
+                System.out.println("Tên đã tồn tại!");
+                name = null;
+            }
 
-        System.out.print("Vị trí: ");
-        r.setLocation(sc.nextLine());
+        } while (name == null);
 
-        System.out.print("Mô tả: ");
-        r.setDescription(sc.nextLine());
+        r.setName(name);
+        // 🔹 capacity
+        System.out.print("Sức chứa (Enter để giữ " + oldRoom.getCapacity() + "): ");
+        String capInput = sc.nextLine();
+        if (capInput.isEmpty()) {
+            r.setCapacity(oldRoom.getCapacity());
+        } else {
+            r.setCapacity(Integer.parseInt(capInput));
+        }
 
+        // 🔹 location
+        System.out.print("Vị trí (Enter để giữ \"" + oldRoom.getLocation() + "\"): ");
+        String loc = sc.nextLine();
+        r.setLocation(loc.isEmpty() ? oldRoom.getLocation() : loc);
+
+        // 🔹 description
+        System.out.print("Mô tả (Enter để giữ \"" + oldRoom.getDescription() + "\"): ");
+        String desc = sc.nextLine();
+        r.setDescription(desc.isEmpty() ? oldRoom.getDescription() : desc);
+
+        // 🔥 update
         if (roomService.updateRoom(r)) {
             System.out.println("Cập nhật thành công!");
         } else {
@@ -100,14 +179,53 @@ public class RoomMenu {
     }
 
     // 🔹 Xóa
-    private void delete() {
-        System.out.print("ID: ");
+    private void deleteRoom() {
+
+        System.out.print("Nhập ID phòng: ");
         int id = Integer.parseInt(sc.nextLine());
 
-        if (roomService.deleteRoom(id)) {
-            System.out.println("Xóa thành công!");
+        List<Booking> bookings = bookingService.getByRoom(id);
+
+        if (bookings.isEmpty()) {
+            // không có booking → xóa luôn
+            if (roomService.deleteRoom(id)) {
+                System.out.println("Xóa thành công!");
+            } else {
+                System.out.println("Xóa thất bại!");
+            }
+            return;
+        }
+
+        // 🔥 có booking → hiển thị
+        System.out.println("Phòng đang có booking:");
+
+        for (Booking b : bookings) {
+            System.out.println("- "
+                    + b.getStartTime().toLocalDate()
+                    + " "
+                    + b.getStartTime().toLocalTime()
+                    + " → "
+                    + b.getEndTime().toLocalTime());
+        }
+
+        // 🔥 hỏi user
+        System.out.println("Bạn có muốn hủy toàn bộ để xóa phòng không?");
+        System.out.println("1. Có");
+        System.out.println("2. Không");
+
+        int choice = Integer.parseInt(sc.nextLine());
+
+        if (choice == 1) {
+            boolean result = roomService.deleteRoomWithCascade(id);
+
+            if (result) {
+                System.out.println("Đã hủy booking và xóa phòng!");
+            } else {
+                System.out.println("Thất bại!");
+            }
+
         } else {
-            System.out.println("Xóa thất bại!");
+            System.out.println("Đã hủy thao tác!");
         }
     }
 }

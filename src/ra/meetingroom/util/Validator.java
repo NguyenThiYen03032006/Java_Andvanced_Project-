@@ -71,4 +71,24 @@ public class Validator {
         }
     }
 
+    // check số điện thoại
+// ^0        -> bắt đầu bằng 0
+// [0-9]{9}  -> sau đó là đúng 9 chữ số
+// Tổng cộng = 10 số
+    private static final String PHONE_REGEX = "^0[0-9]{9}$";
+
+    // check hợp lệ
+    public static boolean isValidPhone(String phone) {
+        if (isEmpty(phone)) return false;
+        return Pattern.matches(PHONE_REGEX, phone.trim());
+    }
+
+    // require + in thông báo lỗi
+    public static boolean requireValidPhone(String phone) {
+        if (!isValidPhone(phone)) {
+            System.out.println("Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0!");
+            return false;
+        }
+        return true;
+    }
 }

@@ -1,5 +1,7 @@
 package ra.meetingroom.model.booking;
 
+import java.util.List;
+
 public class BookingService {
     private int id;
     private int bookingId;   // FK -> bookings
@@ -57,4 +59,7 @@ public class BookingService {
         this.serviceId = serviceId;
     }
 
+    public List<Booking> getByRoom(int id) {
+        return null;
+    }
 }

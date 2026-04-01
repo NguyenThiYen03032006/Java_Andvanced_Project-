@@ -30,9 +30,9 @@ public class AuthMenu {
                         return user;
                     }
                     break;
-                case 3:
-                    System.out.println("Bạn đã chọn thoát !!!");
-                    break;
+                case 0:
+                    System.out.println("Bạn đã chọn dừng chương trình !!!");
+                    System.exit(0);
                 default:
                     System.out.println("Lựa chọn của bạn không hợp lệ");
             }
@@ -42,27 +42,67 @@ public class AuthMenu {
     private void register(){
         String fullname;
         do{
-            System.out.println("Nhap full name: ");
+            System.out.println("Nhập full name: ");
             fullname=sc.nextLine();
         }while (!Validator.requireNotEmpty(fullname, "Username"));
 
         String username;
-        do{
-            System.out.println("Nhap username: ");
+        while (true){
+            System.out.println("Nhập username: ");
             username= sc.nextLine();
-        }while(!Validator.requireNotEmpty(username, "Username") && userDAO.findByUsername(username)!=null);// validate dulieu dau vao + check trung
+            //trong
+            if(!Validator.requireNotEmpty(username, "Username")){
+                continue;
+            }
+            // trung username
+            if(userDAO.findByUsername(username)!=null){
+                System.out.println("Username đã tồn tại!!");
+                continue;
+            }
+            break;
+        };
 
         String email;
-        do{
-            System.out.println("Nhap email: ");
+        while (true){
+            System.out.println("Nhập email: ");
             email=sc.nextLine();
-        }while (!Validator.requireValidEmail(email)&& userDAO.findByEmail(email)!=null);// validate dulieu dau vao + check trung
+            //trong
+            if(!Validator.requireValidEmail(email)){
+                continue;
+            }
+            // trung email
+            if(userDAO.findByEmail(email)!=null){
+                System.out.println("Email đã được đăng ký");
+                continue;
+            }
+            break;
+        }
 
         String pass;
         do{
-            System.out.println("Nhap password: ");
+            System.out.println("Nhập mật khẩu: ");
             pass=sc.nextLine();
         }while (!Validator.requireValidPassword(pass));
+
+        String phone;
+        while (true){
+            System.out.println("Nhập số điện thoại: ");
+            phone=sc.nextLine();
+            // trong
+            if(!Validator.requireNotEmpty(phone, "Phone")){
+                continue;
+            }
+            // trung phone
+            if(userDAO.findByPhone(phone)!=null){
+                System.out.println("Số điện thoại đã được đăng ký");
+                continue;
+            }
+            // định dạng
+            if (!Validator.requireValidPhone(phone)) {
+                continue;
+            }
+            break;
+        }
 
 //        System.out.println("Chọn chức vụ:");
 //        System.out.println("1. Employee");
@@ -84,11 +124,11 @@ public class AuthMenu {
 
         // mac dinh khi dang ky la employee
         String role="EMPLOYEE";
-        boolean check=authService.register(username,pass,fullname,role,email);
+        boolean check=authService.register(username,pass,fullname,role,email,phone);
         if(check){
-            System.out.println(" Dang ky thanh cong");
+            System.out.println("Bạn đã đang ký thành công");
         }else{
-            System.out.println("Dang ky that bai");
+            System.out.println("Đăng ký thất bại");
         }
     }
 

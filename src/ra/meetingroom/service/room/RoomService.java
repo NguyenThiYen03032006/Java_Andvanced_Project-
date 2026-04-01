@@ -15,20 +15,60 @@ public class RoomService {
     private BookingDAO bookingDAO=new BookingDAO();
 
     public boolean addRoom(Room room) {
+
+        if (roomDAO.existsByName(room.getName())) {
+            System.out.println("Tên phòng đã tồn tại!");
+            return false;
+        }
+
         return roomDAO.insert(room);
     }
 
+    public Room getById(int id) {
+        return roomDAO.findById(id);
+    }
     public List<Room> getAllRooms() {
         return roomDAO.findAll();
     }
 
     public boolean updateRoom(Room room) {
+
+        if (roomDAO.existsByNameExceptId(room.getName(), room.getId())) {
+            System.out.println("Tên phòng đã tồn tại!");
+            return false;
+        }
+
         return roomDAO.update(room);
     }
+    public boolean isNameExists(String name) {
+        return roomDAO.existsByName(name.trim());
+    }
 
+    public boolean isNameExistsForUpdate(String name, int id) {
+        return roomDAO.existsByNameExceptId(name.trim(), id);
+    }
+
+    public boolean deleteRoomWithCascade(int roomId) {
+
+        List<Booking> bookings = bookingDAO.findByRoomId(roomId);
+
+        // hủy toàn bộ booking
+        for (Booking b : bookings) {
+            bookingDAO.updateStatus(b.getId(), "CANCELLED");
+        }
+
+        return roomDAO.delete(roomId);
+    }
     public boolean deleteRoom(int id) {
+        // check FK
+        if (bookingDAO.existsByRoomId(id)) {
+            System.out.println("Không thể xóa phòng vì đã có booking!");
+            return false;
+        }
+
         return roomDAO.delete(id);
     }
+
 
     public void showRoomsWithStatus() {
         List<Room> rooms = roomDAO.findAll();
@@ -57,5 +97,8 @@ public class RoomService {
         |Bận                                    |
         |12/06/2006/10:00 đến 12/06/2006/10:30 |
          */
+    }
+    public List<Room> searchRoom(String keyword) {
+        return roomDAO.searchByName(keyword);
     }
 }

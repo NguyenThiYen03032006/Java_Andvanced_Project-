@@ -59,10 +59,7 @@ public class Room {
     }
     @Override
     public String toString() {
-        return "ID: " + id +
-                " | Tên: " + name +
-                " | Sức chứa: " + capacity +
-                " | Vị trí: " + location +
-                " | Mô tả: " + description;
+        return String.format("| %2d | %-6s | %8d | %-8s | %-21s |\n-------------------------------------------------------------",id,name,capacity,location,description);
+
     }
 }

@@ -102,4 +102,8 @@ public class BookingService {
     public List<Booking> getApproved() {
         return bookingDAO.findByStatus("APPROVED");
     }
+
+    public List<Booking> getByRoom(int roomId) {
+        return bookingDAO.findByRoomId(roomId);
+    }
 }
