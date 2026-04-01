@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class BookingService {
-
     private static BookingDAO bookingDAO = new BookingDAO();
     private static BookingEquipmentDAO bookingEquipmentDAO=new BookingEquipmentDAO();
     private static EquipmentDAO equipmentDAO=new EquipmentDAO();
@@ -21,28 +20,20 @@ public class BookingService {
 
     // chỉ check trung voi approved
     public boolean isConflictWithApproved(int roomId, LocalDateTime newStart, LocalDateTime newEnd) {
-
         List<Booking> list = bookingDAO.findByRoomId(roomId);
-
         for (Booking b : list) {
-
             if ("APPROVED".equals(b.getStatus())) {
-
                 LocalDateTime oldStart = b.getStartTime();
                 LocalDateTime oldEnd = b.getEndTime();
-
-                //  công thức vàng
                 if (newStart.isBefore(oldEnd) && newEnd.isAfter(oldStart)) {
                     return true;
                 }
             }
         }
-
         return false;
     }
-    // 🔹 Tạo booking
+    //  Tạo booking
     public int createBooking(Booking b) {
-
         if (isConflictWithApproved(
                 b.getRoomId(),
                 b.getStartTime(),
@@ -51,10 +42,9 @@ public class BookingService {
             System.out.println("Đã có phòng được sử dụng trong thời gian này!");
             return -1;
         }
-
         b.setStatus("PENDING");
 
-        return bookingDAO.insert(b); // 🔥 trả ID
+        return bookingDAO.insert(b); // trả ID
     }
 
     public boolean approveBooking(int bookingId) {
@@ -65,7 +55,6 @@ public class BookingService {
             System.out.println("Không tìm thấy booking!");
             return false;
         }
-
         // check trùng phòng
         if (isConflictWithApproved(
                 booking.getRoomId(),
@@ -76,10 +65,10 @@ public class BookingService {
             return false;
         }
 
-        // 🔥 1. Lấy thiết bị
+        //  Lấy thiết bị
         List<BookingEquipment> list = bookingEquipmentDAO.findByBookingId(bookingId);
 
-        // 🔥 2. Check đủ
+        //  Check đủ
         for (BookingEquipment be : list) {
             if (!equipmentDAO.hasEnough(be.getEquipmentId(), be.getQuantity())) {
                 System.out.println("Thiếu thiết bị ID: " + be.getEquipmentId());
@@ -87,15 +76,15 @@ public class BookingService {
             }
         }
 
-        // 🔥 3. Trừ thiết bị
+        // 3. Trừ thiết bị
         for (BookingEquipment be : list) {
             equipmentDAO.decrease(be.getEquipmentId(), be.getQuantity());
         }
 
-        // 🔥 4. Duyệt booking
+        //  4. Duyệt booking
         bookingDAO.updateStatus(bookingId, "APPROVED");
 
-        // 🔥 5. Hủy booking trùng
+        // Hủy booking trùng
         List<Booking> conflicts = bookingDAO.findConflictBookings(
                 booking.getRoomId(),
                 booking.getStartTime(),

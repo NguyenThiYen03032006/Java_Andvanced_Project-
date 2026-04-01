@@ -9,7 +9,7 @@ import java.util.List;
 
 public class EquipmentDAO {
 
-    // 🔹 Lấy danh sách
+    // Lấy danh sách
     public List<Equipment> findAll() {
         List<Equipment> list = new ArrayList<>();
         String sql = "SELECT * FROM equipments";
@@ -55,7 +55,7 @@ public class EquipmentDAO {
         }
         return false;
     }
-    // 🔹 Update số lượng
+    //  Update số lượng
     public boolean updateQuantity(int id, int total, int available) {
         String sql = "UPDATE equipments SET total_quantity=?, available_quantity=? WHERE id=?";
 
@@ -74,7 +74,7 @@ public class EquipmentDAO {
         return false;
     }
 
-    // 🔹 Xóa thiết bị
+    // Xóa thiết bị
     public boolean delete(int id) {
         String sql = "DELETE FROM equipments WHERE id=?";
 

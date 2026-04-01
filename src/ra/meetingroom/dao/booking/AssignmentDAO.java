@@ -10,7 +10,7 @@ import java.util.List;
 
 public class AssignmentDAO {
 
-    // 🔹 1. Thêm phân công
+    //  Thêm phân công
     public boolean insert(int bookingId, int supportId, String status) {
         String sql = "INSERT INTO assignments (booking_id, support_id, status) VALUES (?, ?, ?)";
         try (Connection conn = DBConnection.openConnection();
@@ -25,7 +25,7 @@ public class AssignmentDAO {
         return false;
     }
 
-    // 🔹 2. Lấy danh sách công việc theo support
+    // Lấy danh sách công việc theo support
     public List<Assignment> findBySupportId(int supportId) {
         List<Assignment> list = new ArrayList<>();
         String sql = "SELECT * FROM assignments WHERE support_id = ?";
@@ -47,7 +47,7 @@ public class AssignmentDAO {
         return list;
     }
 
-    // 🔹 3. Update trạng thái (Preparing → Ready → Missing)
+    // Update trạng thái (Preparing → Ready → Missing)
     public boolean updateStatus(int id, String status) {
         String sql = "UPDATE assignments SET status = ? WHERE id = ?";
         try (Connection conn = DBConnection.openConnection();
@@ -61,7 +61,7 @@ public class AssignmentDAO {
         return false;
     }
 
-    // 🔹 4. Lấy trạng thái theo booking (cho Employee xem)
+    //  Lấy trạng thái theo booking (cho Employee xem)
     public Assignment findByBookingId(int bookingId) {
         String sql = "SELECT * FROM assignments WHERE booking_id = ?";
 
@@ -86,9 +86,7 @@ public class AssignmentDAO {
         return null;
     }
     public Assignment findById(int id) {
-
         String sql = "SELECT * FROM assignments WHERE id = ?";
-
         try (Connection conn = DBConnection.openConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 

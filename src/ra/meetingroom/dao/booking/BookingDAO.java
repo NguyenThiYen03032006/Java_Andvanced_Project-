@@ -12,11 +12,9 @@ public class BookingDAO {
     public List<Booking> findAll() {
         List<Booking> list = new ArrayList<>();
         String sql = "SELECT * FROM bookings";
-
         try (Connection conn = DBConnection.openConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-
             while (rs.next()) {
                 Booking b = new Booking();
                 b.setId(rs.getInt("id"));
@@ -27,24 +25,19 @@ public class BookingDAO {
                 b.setStatus(rs.getString("status"));
                 list.add(b);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return list;
     }
     // lấy danh sách booking theo phòng => check trùng lịch
     public List<Booking> findByRoomId(int roomId) {
         List<Booking> list = new ArrayList<>();
         String sql = "SELECT * FROM bookings WHERE room_id = ?";
-
         try (Connection conn = DBConnection.openConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, roomId);
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 Booking b = new Booking();
                 b.setId(rs.getInt("id"));
@@ -52,10 +45,8 @@ public class BookingDAO {
                 b.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
                 b.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
                 b.setStatus(rs.getString("status"));
-
                 list.add(b);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,21 +55,17 @@ public class BookingDAO {
 
     public boolean existsByRoomId(int roomId) {
         String sql = "SELECT 1 FROM bookings WHERE room_id = ? LIMIT 1";
-
         try (Connection conn = DBConnection.openConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, roomId);
             ResultSet rs = ps.executeQuery();
-
             return rs.next();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
-    // 🔹 Insert booking
+    // Insert booking
     public int insert(Booking b) {
         String sql = "INSERT INTO bookings(user_id, room_id, start_time, end_time, status) VALUES (?, ?, ?, ?, ?)";
 
@@ -96,7 +83,7 @@ public class BookingDAO {
             if (affected > 0) {
                 ResultSet rs = ps.getGeneratedKeys();
                 if (rs.next()) {
-                    return rs.getInt(1); // 🔥 trả về ID vừa insert
+                    return rs.getInt(1); //trả về ID vừa insert
                 }
             }
 

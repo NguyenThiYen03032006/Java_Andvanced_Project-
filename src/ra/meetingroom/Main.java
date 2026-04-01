@@ -8,13 +8,10 @@ import ra.meetingroom.presentation.SupportMenu;
 
 public class Main {
     public static User currentUser = null;
-
     public static void main(String[] args) {
         AuthMenu authMenu = new AuthMenu();
-
         while (true) {
             currentUser = authMenu.showMenuAuth();
-
             if (currentUser != null) {
                 switch (currentUser.getRole()) {
                     case "ADMIN":

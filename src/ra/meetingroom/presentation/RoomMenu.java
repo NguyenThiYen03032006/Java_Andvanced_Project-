@@ -33,7 +33,6 @@ public class RoomMenu {
                 System.out.println("Vui lòng nhập lựa chọn hợp lệ!");
                 continue;
             }
-
             switch (choice) {
                 case 1:
                     showList();
@@ -82,23 +81,18 @@ public class RoomMenu {
     // 🔹 Thêm
     private void add() {
         Room r = new Room();
-
         String name;
         do {
             System.out.print("Nhập tên phòng: ");
             name = sc.nextLine().trim();
-
             if (!Validator.requireNotEmpty(name, "Tên phòng")) continue;
-
-            // 🔥 check trùng NGAY TẠI ĐÂY
+            //  check trùng
             if (roomService.isNameExists(name)) {
                 System.out.println("Tên phòng đã tồn tại!");
                 name = null; // ép nhập lại
             }
-
         } while (name == null);
-
-        r.setName(name); // 🔥 nhớ set
+        r.setName(name);
 
         System.out.print("Sức chứa: ");
         r.setCapacity(Integer.parseInt(sc.nextLine()));
@@ -116,13 +110,13 @@ public class RoomMenu {
         }
     }
 
-    // 🔹 Sửa
+    // Sửa
     private void update() {
 
         System.out.print("Nhập ID phòng cần sửa: ");
         int id = Integer.parseInt(sc.nextLine());
 
-        // 🔥 lấy phòng cũ
+        //  lấy phòng cũ
         Room oldRoom = roomService.getById(id);
 
         if (oldRoom == null) {

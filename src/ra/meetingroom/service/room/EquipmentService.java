@@ -13,31 +13,25 @@ public class EquipmentService {
         return dao.findAll();
     }
     public boolean addEquipment(Equipment e) {
-
         // validation
         if (e.getAvailableQuantity() > e.getTotalQuantity()) {
             System.out.println("Số lượng khả dụng không được lớn hơn tổng số lượng!");
             return false;
         }
-
         if (e.getTotalQuantity() <= 0) {
             System.out.println("Tổng số lượng phải > 0");
             return false;
         }
-
         return dao.insert(e);
     }
     public boolean updateQuantity(int id, int total, int available) {
-
         // validation
         if (available > total) {
             System.out.println("Số lượng khả dụng không được lớn hơn tổng số lượng!");
             return false;
         }
-
         return dao.updateQuantity(id, total, available);
     }
-
     public boolean delete(int id) {
         return dao.delete(id);
     }

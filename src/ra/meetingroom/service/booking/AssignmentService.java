@@ -13,29 +13,22 @@ public class AssignmentService {
     private BookingDAO bookingDAO = new BookingDAO();
     private UserDAO userDAO = new UserDAO(); // nếu có
 
+    // thêm support
     public boolean assign(int bookingId, int supportId) {
-
         Booking booking = bookingDAO.findById(bookingId);
-
         if (booking == null) {
             System.out.println("Booking không tồn tại!");
             return false;
         }
-
         if (!"APPROVED".equals(booking.getStatus())) {
             System.out.println("Chỉ assign khi booking đã APPROVED!");
             return false;
         }
-
         Assignment exist = assignmentDAO.findByBookingId(bookingId);
         if (exist != null) {
             System.out.println("Booking đã có support rồi!");
             return false;
         }
-
-        // optional check role
-        // User user = userDAO.findById(supportId);
-        // if (user == null || !"SUPPORT".equals(user.getRole())) return false;
 
         return assignmentDAO.insert(bookingId, supportId, "PREPARING");
     }

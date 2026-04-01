@@ -13,18 +13,13 @@ import java.util.List;
 public class UserDAO {
     public User findById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
-
         try (Connection conn = DBConnection.openConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-
             if (rs.next()) {
-
                 String role = rs.getString("role");
                 User user;
-
                 switch (role) {
                     case "ADMIN":
                         user = new Admin();
@@ -40,10 +35,9 @@ public class UserDAO {
                 user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
                 user.setFullName(rs.getString("full_name"));
-                user.setEmail(rs.getString("email"));     // 🔥 thêm
-                user.setPhone(rs.getString("phone"));     // 🔥 thêm
+                user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone"));
                 user.setRole(role);
-
                 return user;
             }
 

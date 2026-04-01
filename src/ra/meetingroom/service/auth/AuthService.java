@@ -14,12 +14,10 @@ public class AuthService {
     private static UserDAO userDAO=new UserDAO();
     // dang ky
     public boolean register(String username,String pass,String fullName,String role,String email,String phone){
-
         // hash pass
         String hash= PasswordUtil.hashPassword(pass);
         // tao user
         User user=new Employee();
-
         user.setFullName(fullName);
         user.setUsername(username);
         user.setEmail(email);
@@ -40,7 +38,7 @@ public class AuthService {
 
         if (PasswordUtil.checkPassword(pass, user.getPassword())) {
             System.out.println("Dang nhap thanh cong");
-            return user; // ✅ trả user
+            return user; //  trả user
         } else {
             System.out.println("Sai password");
             return null;
