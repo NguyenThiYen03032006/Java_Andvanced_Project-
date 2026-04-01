@@ -1,7 +1,11 @@
 package ra.meetingroom.service.booking;
 
 import ra.meetingroom.dao.booking.BookingDAO;
+import ra.meetingroom.dao.booking.BookingEquipmentDAO;
+import ra.meetingroom.dao.room.EquipmentDAO;
 import ra.meetingroom.model.booking.Booking;
+import ra.meetingroom.model.booking.BookingEquipment;
+import ra.meetingroom.model.room.Equipment;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,6 +13,8 @@ import java.util.List;
 public class BookingService {
 
     private static BookingDAO bookingDAO = new BookingDAO();
+    private static BookingEquipmentDAO bookingEquipmentDAO=new BookingEquipmentDAO();
+    private static EquipmentDAO equipmentDAO=new EquipmentDAO();
     public List<Booking> getAll() {
         return bookingDAO.findAll();
     }
@@ -35,47 +41,73 @@ public class BookingService {
         return false;
     }
     // 🔹 Tạo booking
-    public boolean createBooking(Booking b) {
+    public int createBooking(Booking b) {
+
         if (isConflictWithApproved(
                 b.getRoomId(),
                 b.getStartTime(),
                 b.getEndTime()
         )) {
             System.out.println("Đã có phòng được sử dụng trong thời gian này!");
-            return false;
+            return -1;
         }
+
         b.setStatus("PENDING");
-        return bookingDAO.insert(b);
+
+        return bookingDAO.insert(b); // 🔥 trả ID
     }
 
     public boolean approveBooking(int bookingId) {
+
         Booking booking = bookingDAO.findById(bookingId);
+
         if (booking == null) {
             System.out.println("Không tìm thấy booking!");
             return false;
         }
-        //  check trùng với APPROVED
+
+        // check trùng phòng
         if (isConflictWithApproved(
                 booking.getRoomId(),
                 booking.getStartTime(),
                 booking.getEndTime()
         )) {
-            System.out.println("Đã có booking APPROVED trùng!");
+            System.out.println("Trùng lịch phòng!");
             return false;
         }
-        //  duyệt booking này
+
+        // 🔥 1. Lấy thiết bị
+        List<BookingEquipment> list = bookingEquipmentDAO.findByBookingId(bookingId);
+
+        // 🔥 2. Check đủ
+        for (BookingEquipment be : list) {
+            if (!equipmentDAO.hasEnough(be.getEquipmentId(), be.getQuantity())) {
+                System.out.println("Thiếu thiết bị ID: " + be.getEquipmentId());
+                return false;
+            }
+        }
+
+        // 🔥 3. Trừ thiết bị
+        for (BookingEquipment be : list) {
+            equipmentDAO.decrease(be.getEquipmentId(), be.getQuantity());
+        }
+
+        // 🔥 4. Duyệt booking
         bookingDAO.updateStatus(bookingId, "APPROVED");
-        // tìm PENDING trùng → hủy
+
+        // 🔥 5. Hủy booking trùng
         List<Booking> conflicts = bookingDAO.findConflictBookings(
                 booking.getRoomId(),
                 booking.getStartTime(),
                 booking.getEndTime()
         );
+
         for (Booking b : conflicts) {
             if (b.getId() != bookingId) {
                 bookingDAO.updateStatus(b.getId(), "CANCELLED");
             }
         }
+
         return true;
     }
 

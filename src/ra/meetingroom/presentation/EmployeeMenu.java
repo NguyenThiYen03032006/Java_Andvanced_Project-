@@ -33,7 +33,13 @@ public class EmployeeMenu {
 |                    0. Thoát                                   |
 -----------------------------------------------------------------""");
             System.out.print("Lựa chọn của bạn: ");
-            int choice = Integer.parseInt(sc.nextLine());
+            int choice;
+            try {
+                choice = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Vui lòng nhập lựa chọn hợp lệ!");
+                continue;
+            }
             switch (choice) {
                 case 1:
                     roomService.showRoomsWithStatus();

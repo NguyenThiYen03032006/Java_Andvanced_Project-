@@ -79,11 +79,11 @@ public class BookingDAO {
         return false;
     }
     // 🔹 Insert booking
-    public boolean insert(Booking b) {
+    public int insert(Booking b) {
         String sql = "INSERT INTO bookings(user_id, room_id, start_time, end_time, status) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.openConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setInt(1, b.getUserId());
             ps.setInt(2, b.getRoomId());
@@ -91,12 +91,20 @@ public class BookingDAO {
             ps.setTimestamp(4, Timestamp.valueOf(b.getEndTime()));
             ps.setString(5, b.getStatus());
 
-            return ps.executeUpdate() > 0;
+            int affected = ps.executeUpdate();
+
+            if (affected > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1); // 🔥 trả về ID vừa insert
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+
+        return -1; // thất bại
     }
 
     public Booking findById(int id) {
@@ -140,6 +148,7 @@ public class BookingDAO {
         }
         return false;
     }
+
     // lọc phòng có trạng thái pendding
     public List<Booking> findConflictBookings(int roomId, LocalDateTime start, LocalDateTime end) {
 

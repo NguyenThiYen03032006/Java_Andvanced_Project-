@@ -89,4 +89,39 @@ public class EquipmentDAO {
         }
         return false;
     }
+    public boolean hasEnough(int equipmentId, int quantity) {
+        String sql = "SELECT available_quantity FROM equipments WHERE id = ?";
+
+        try (Connection conn = DBConnection.openConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, equipmentId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("available_quantity") >= quantity;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean decrease(int equipmentId, int quantity) {
+        String sql = "UPDATE equipments SET available_quantity = available_quantity - ? WHERE id = ?";
+
+        try (Connection conn = DBConnection.openConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, quantity);
+            ps.setInt(2, equipmentId);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

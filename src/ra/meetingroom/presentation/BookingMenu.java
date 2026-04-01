@@ -1,5 +1,6 @@
 package ra.meetingroom.presentation;
 
+import ra.meetingroom.dao.booking.BookingEquipmentDAO;
 import ra.meetingroom.model.booking.Booking;
 import ra.meetingroom.service.booking.AssignmentService;
 import ra.meetingroom.service.booking.BookingService;
@@ -14,6 +15,7 @@ public class BookingMenu {
 
     private BookingService bookingService = new BookingService();
     private AssignmentService assignmentService=new AssignmentService();
+    BookingEquipmentDAO bookingEquipmentDAO = new BookingEquipmentDAO();
     private Scanner sc = new Scanner(System.in);
 
     public void show(int userId, String role) {
@@ -38,7 +40,13 @@ public class BookingMenu {
 ----------------------------------------------------------------""");
                 System.out.print("Lựa chọn của bạn: ");
             }
-            int choice = Integer.parseInt(sc.nextLine());
+            int choice;
+            try {
+                choice = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Vui lòng nhập lựa chọn hợp lệ!");
+                continue;
+            }
             switch (role) {
                 case "EMPLOYEE":
                     if (choice == 1) createBooking(userId);
@@ -97,8 +105,26 @@ public class BookingMenu {
         b.setStartTime(start);
         b.setEndTime(end);
 
-        if (bookingService.createBooking(b)) {
-            System.out.println("Đặt phòng thành công!");
+        int bookingId = bookingService.createBooking(b);
+
+        if (bookingId > 0) {
+            System.out.println("Đặt phòng thành công! ID = " + bookingId);
+
+            System.out.print("Thêm thiết bị? (y/n): ");
+            if (sc.nextLine().equalsIgnoreCase("y")) {
+
+                while (true) {
+                    System.out.print("Equipment ID (0 để thoát): ");
+                    int equipmentId = Integer.parseInt(sc.nextLine());
+                    if (equipmentId == 0) break;
+
+                    System.out.print("Số lượng: ");
+                    int qty = Integer.parseInt(sc.nextLine());
+
+                    bookingEquipmentDAO.insert(bookingId, equipmentId, qty);
+                }
+            }
+
         } else {
             System.out.println("Đặt phòng thất bại!");
         }
